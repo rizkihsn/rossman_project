@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Rossmann Store Sales Prediction - Machine Learning Project">
+    <title>Rossmann Store Sales Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='logo_rossmann.png') }}" alt="Rossmann Logo" height="35" class="logo-img">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/predict">Predict</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/comparison">Comparison</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/info">Info</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="container text-center position-relative">
+            <h2 class="display-4 fw-bold text-white mb-2" style="text-shadow: 0 0 20px rgba(102, 126, 234, 0.8);"
+                data-aos="fade-down">AI</h2>
+            <h1 class="display-2 fw-black text-white text-uppercase mb-3"
+                style="font-weight: 900; letter-spacing: 2px; text-shadow: 0 0 30px rgba(118, 75, 162, 0.9);"
+                data-aos="zoom-in" data-aos-delay="200">
+                ROSSMANN SALES<br>PREDICTION
+            </h1>
+            <p class="lead text-white-50 mb-5 fst-italic" data-aos="fade-up" data-aos-delay="400">
+                Ditenagai oleh 5 Algoritma Machine Learning
+            </p>
+            <a href="/predict" class="btn btn-primary btn-lg px-5 py-3 fw-bold rounded-pill shadow-lg hero-btn"
+                data-aos="flip-up" data-aos-delay="600">
+                MULAI PREDIKSI!
+            </a>
+
+            <div class="mt-4 d-flex justify-content-center align-items-center gap-2">
+                <span class="badge bg-success px-2 py-1 fs-6">★★★★★ <span class="fw-normal"> Akurasi Model
+                        Tinggi</span></span>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">
+                &copy; 2026 Rossmann Store Sales Prediction |
+                Machine Learning Project |
+                <a href="https://www.kaggle.com/datasets/shahpranshu27/rossman-store-sales" target="_blank"
+                    class="text-warning text-decoration-none">Dataset Source</a>
+            </p>
+            <small class="text-white-50 mt-2 d-block" style="font-size: 0.75rem;">
+                *Proyek ini dibuat hanya untuk tujuan pendidikan dan tidak berafiliasi dengan Rossmann. 
+                Sumber data berasal dari Kaggle Store Sales Competition.
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
+</body>
+
+</html>

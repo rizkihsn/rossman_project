@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info - Rossmann Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='logo_rossmann.png') }}" alt="Rossmann Logo" height="35" class="logo-img">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span
+                    class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/predict">Predict</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/comparison">Comparison</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/info">Info</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <h1 class="mb-5 fw-bold text-center" data-aos="fade-down">📚 Informasi Project</h1>
+
+        <!-- Dataset -->
+        <div class="card mb-5" data-aos="fade-up">
+            <div class="card-header bg-primary text-white fw-bold">📊 Dataset</div>
+            <div class="card-body">
+                <h5>Rossmann Store Sales</h5>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <p><strong>Sumber:</strong> <a href="{{ info.dataset.source }}" target="_blank">Kaggle</a></p>
+                        <p><strong>Deskripsi:</strong> {{ info.dataset.description }}</p>
+                        <p><strong>Total Records:</strong> 1,017,209 baris</p>
+                        <p><strong>Periode:</strong> 2013 – 2015</p>
+                        <p><strong>Lisensi:</strong> <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" class="text-primary text-decoration-none fw-bold">Database Contents License (DbCL)</a> / Kaggle Competition Rules</p>
+
+                        <div class="alert alert-secondary mt-4 border">
+                            <h6 class="fw-bold mb-2">ℹ️ Kenapa test.csv tidak ada?</h6>
+                            <p class="mb-0 small text-muted">
+                                Struktur kolom <code>test.csv</code> sama persis dengan <code>train.csv</code>,
+                                tetapi <strong>tanpa kolom target (Sales) dan Customers</strong>.
+                                Di dalam project ini, input manual dari *user* di halaman "Predict" menggantikan
+                                peran dari <code>test.csv</code> tersebut.
+                            </p>
+                        </div>
+
+                        <div class="alert alert-success mt-4 border border-success">
+                            <h6 class="fw-bold mb-2 text-success">🎯 Target Variable</h6>
+                            <p class="mb-1 small"><strong>Variable:</strong> Sales</p>
+                            <p class="mb-1 small"><strong>Type:</strong> Continuous (Regression)</p>
+                            <p class="mb-1 small"><strong>Deskripsi:</strong> Penjualan harian per toko dalam EUR</p>
+                            <p class="mb-0 small"><strong>Problem:</strong> Memprediksi jumlah penjualan harian
+                                berdasarkan faktor temporal, promosi, dan informasi toko</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-info">
+                            <h6 class="fw-bold mb-2">📝 Kolom train.csv:</h6>
+                            <ul class="mb-0 small">
+                                <li><strong>Store:</strong> ID toko unik (1-1115)</li>
+                                <li><strong>DayOfWeek:</strong> Hari dalam seminggu (1-7)</li>
+                                <li><strong>Date:</strong> Tanggal transaksi</li>
+                                <li><strong>Sales:</strong> Penjualan harian (TARGET) ⭐</li>
+                                <li><strong>Customers:</strong> Jumlah pelanggan</li>
+                                <li><strong>Open:</strong> Status toko (0/1)</li>
+                                <li><strong>Promo:</strong> Ada promosi (0/1)</li>
+                                <li><strong>StateHoliday:</strong> Libur negara (0/a/b/c)</li>
+                                <li><strong>SchoolHoliday:</strong> Libur sekolah (0/1)</li>
+                            </ul>
+                        </div>
+                        <div class="alert alert-warning">
+                            <h6 class="fw-bold mb-2">📝 Kolom store.csv:</h6>
+                            <ul class="mb-0 small">
+                                <li><strong>StoreType:</strong> Tipe toko (a/b/c/d)</li>
+                                <li><strong>Assortment:</strong> Level produk (a/b/c)</li>
+                                <li><strong>CompetitionDistance:</strong> Jarak kompetitor (m)</li>
+                                <li><strong>CompetitionOpenSince:</strong> Kapan kompetitor buka</li>
+                                <li><strong>Promo2:</strong> Promosi lanjutan (0/1)</li>
+                                <li><strong>Promo2Since:</strong> Mulai promo lanjutan</li>
+                                <li><strong>PromoInterval:</strong> Interval bulan promo</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="card mb-5" data-aos="fade-up">
+            <div class="card-header bg-success text-white fw-bold">🔧 Features yang Digunakan</div>
+            <div class="card-body">
+                <h5 class="mb-3">Features setelah Preprocessing ({{ info.features|length }} fitur):</h5>
+                <div class="row">
+                    {% for feature in info.features %}
+                    <div class="col-md-4 col-lg-3 mb-2">
+                        <span class="badge bg-info me-1">{{ loop.index }}</span>
+                        <strong>{{ feature }}</strong>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <hr class="my-4">
+
+                <h5 class="mb-3">Preprocessing Steps:</h5>
+                <ol>
+                    <li>✅ Load dataset: train.csv, test.csv, <strong>store.csv</strong></li>
+                    <li>✅ Gabungkan: train + store dan test + store (left join)</li>
+                    <li>✅ Handle missing values (CompetitionDistance → median, sisanya → 0)</li>
+                    <li>✅ Filter baris Sales = 0 (toko tutup)</li>
+                    <li>✅ Feature engineering dari Date → Year, Month, Day, Quarter, WeekOfYear</li>
+                    <li>✅ Encoding: StateHoliday, StoreType, Assortment → numerik</li>
+                    <li>✅ Drop kolom: Date, Customers, PromoInterval</li>
+                    <li>✅ Normalisasi: StandardScaler</li>
+                    <li>✅ Split: 80% train, 20% test</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Models -->
+        <div class="card mb-5" data-aos="fade-up">
+            <div class="card-header bg-warning fw-bold">🤖 Machine Learning Models</div>
+            <div class="card-body">
+                <div class="row g-4 justify-content-center">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card model-card h-100 border">
+                            <div class="card-body text-center">
+                                <h5 class="card-title fw-bold">📈 Linear Regression</h5>
+                                <p class="card-text small text-muted">Model baseline — hubungan linier antara features
+                                    dan target</p>
+                                <span class="badge bg-warning text-dark">Regression</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card model-card h-100 border">
+                            <div class="card-body text-center">
+                                <h5 class="card-title fw-bold">🧠 ANN</h5>
+                                <p class="card-text small text-muted">Artificial Neural Network — 3 hidden layers untuk
+                                    pola non-linier</p>
+                                <span class="badge bg-primary">Deep Learning</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card model-card h-100 border">
+                            <div class="card-body text-center">
+                                <h5 class="card-title fw-bold">⏱️ LSTM (RNN)</h5>
+                                <p class="card-text small text-muted">Recurrent Neural Network — khusus data time series
+                                    / sekuensial</p>
+                                <span class="badge bg-info">Time Series</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card model-card h-100 border">
+                            <div class="card-body text-center">
+                                <h5 class="card-title fw-bold">📦 K-Means Clustering</h5>
+                                <p class="card-text small text-muted">Unsupervised learning — segmentasi/pengelompokan
+                                    toko</p>
+                                <span class="badge bg-success">Clustering</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card model-card h-100 border">
+                            <div class="card-body text-center">
+                                <h5 class="card-title fw-bold">🔄 Backpropagation</h5>
+                                <p class="card-text small text-muted">Custom NN — explicit gradient computation & weight
+                                    update</p>
+                                <span class="badge bg-danger">Neural Network</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+                <h5>Evaluasi Metrik:</h5>
+                <div class="row g-3">
+                    {% for metric, explanation in info.metrics.items() %}
+                    <div class="col-md-4">
+                        <div class="alert alert-light border">
+                            <strong>{{ metric }}</strong><br>
+                            <small class="text-muted">{{ explanation }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture -->
+        <div class="card mb-5" data-aos="fade-up">
+            <div class="card-header bg-danger text-white fw-bold">🏗️ Arsitektur Neural Network</div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <h6 class="fw-bold mb-3">ANN:</h6>
+                        <pre><code>Input ({{ info.features|length }} features)
+    ↓
+Dense(128) + ReLU + Dropout(0.3)
+    ↓
+Dense(64) + ReLU + Dropout(0.2)
+    ↓
+Dense(32) + ReLU
+    ↓
+Output (1 neuron → Sales)</code></pre>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="fw-bold mb-3">LSTM:</h6>
+                        <pre><code>Time Series (30 timesteps)
+    ↓
+LSTM(64) + ReLU + Dropout(0.2)
+    ↓
+LSTM(32) + ReLU + Dropout(0.2)
+    ↓
+Dense(16) + ReLU
+    ↓
+Output (1 neuron → Sales)</code></pre>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="fw-bold mb-3">Backpropagation:</h6>
+                        <pre><code>Input ({{ info.features|length }} features)
+    ↓
+Dense(64) + ReLU + Dropout(0.2)
+    ↓ tf.GradientTape
+Dense(32) + ReLU + Dropout(0.2)
+    ↓ Explicit Gradient
+Output (1 neuron → Sales)
+    ↓
+Weight Update Manual</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Structure -->
+        <div class="card mb-5" data-aos="fade-up">
+            <div class="card-header bg-info text-white fw-bold">📁 Struktur Project</div>
+            <div class="card-body">
+                <pre><code>rossman_project/
+├── data/
+│   ├── train.csv          ← Dataset training (1M+ rows)
+│   ├── test.csv           ← Dataset testing
+│   └── store.csv          ← Informasi toko (1115 stores)
+├── notebooks/
+│   ├── 01_preprocessing_eda.py   ← Preprocessing & EDA
+│   └── 02_model_implementation.py ← 5 Algoritma ML
+├── models/
+│   ├── preprocessing_data.pkl    ← Data yang sudah dipreprocess
+│   ├── linear_regression.pkl     ← Model Linear Regression
+│   ├── ann_model.h5              ← Model ANN
+│   ├── lstm_model.h5             ← Model LSTM
+│   ├── backprop_model.h5         ← Model Backpropagation
+│   ├── kmeans_model.pkl          ← Model K-Means
+│   └── model_results.pkl         ← Hasil evaluasi semua model
+├── app/
+│   ├── static/                   ← Custom CSS/JS
+│   ├── templates/                ← HTML Templates
+│   └── app.py                    ← Flask Web Application
+├── docs/
+│   ├── 01_eda_visualization.png
+│   ├── 02_correlation_matrix.png
+│   ├── 03-08_model_results.png
+│   └── model_comparison.csv
+├── requirements.txt
+└── README.md</code></pre>
+            </div>
+        </div>
+
+        <!-- Technologies -->
+        <div class="card" data-aos="fade-up">
+            <div class="card-header bg-secondary text-white fw-bold">💻 Technologies</div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Python Libraries:</h6>
+                        <ul class="small">
+                            <li>Pandas — Data manipulation & analysis</li>
+                            <li>NumPy — Numerical computing</li>
+                            <li>Scikit-learn — ML algorithms (LR, K-Means)</li>
+                            <li>TensorFlow/Keras — Deep learning (ANN, LSTM, Backprop)</li>
+                            <li>Matplotlib/Seaborn — Data visualization</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Web Framework:</h6>
+                        <ul class="small">
+                            <li>Flask — Python web framework</li>
+                            <li>Bootstrap 5 — CSS framework</li>
+                            <li>Chart.js — Interactive charts</li>
+                            <li>Jinja2 — HTML templating</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2026 Rossmann Sales Prediction | <a href="/"
+                    class="text-warning text-decoration-none">Home</a></p>
+            <small class="text-white-50 mt-2 d-block" style="font-size: 0.75rem;">
+                *Proyek ini dibuat hanya untuk tujuan pendidikan dan tidak berafiliasi dengan Rossmann.
+                Sumber data berasal dari Kaggle Store Sales Competition.
+            </small>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
+</body>
+
+</html>

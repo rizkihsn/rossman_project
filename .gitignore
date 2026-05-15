@@ -1,0 +1,51 @@
+# ==========================================
+# ROSSMANN PROJECT - .gitignore
+# ==========================================
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ---------- Virtual Environment ----------
+.venv/
+venv/
+env/
+ENV/
+
+# ---------- IDE / Editor ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ---------- Jupyter Notebook ----------
+.ipynb_checkpoints/
+
+# ---------- Large Data Files ----------
+# Dataset CSV terlalu besar untuk GitHub (>38MB)
+data/train.csv
+data/test.csv
+
+# ---------- Trained Models (auto-generated) ----------
+# File model bisa di-generate ulang dari notebook
+models/*.pkl
+models/*.h5
+
+# ---------- Scratch / Temporary Files ----------
+scratch/
+
+# ---------- OS Files ----------
+*.log
+*.tmp
+
+# ---------- Gemini ----------
+.gemini/

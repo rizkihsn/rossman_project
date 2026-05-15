@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Sales - Rossmann</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='logo_rossmann.png') }}" alt="Rossmann Logo" height="35" class="logo-img">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span
+                    class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/predict">Predict</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/comparison">Comparison</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/info">Info</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <h1 class="mb-4 fw-bold text-center" data-aos="fade-down">🔮 Prediksi Penjualan Toko</h1>
+
+        <div class="row g-4">
+            <!-- Form -->
+            <div class="col-lg-5" data-aos="fade-right">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white fw-bold">📝 Input Data</div>
+                    <div class="card-body">
+                        <form method="POST" action="/predict" id="predictForm">
+                            <div class="mb-3">
+                                <label for="store" class="form-label">🏪 Store ID</label>
+                                <input type="number" class="form-control" id="store" name="store" min="1" max="1115"
+                                    value="{{ input_data.Store if input_data else '1' }}" required>
+                                <small class="text-muted">Pilih store (1-1115)</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="date" class="form-label">📆 Tanggal</label>
+                                <input type="date" class="form-control" id="date" name="date"
+                                    value="{{ input_data.Year ~ '-' ~ '%02d'|format(input_data.Month) ~ '-' ~ '%02d'|format(input_data.Day) if input_data else '2015-07-15' }}"
+                                    required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="promo" class="form-label">🎁 Promosi</label>
+                                <select class="form-select" id="promo" name="promo" required>
+                                    <option value="0" {{ 'selected' if input_data and input_data.Promo==0 }}>Tidak Ada
+                                        Promosi</option>
+                                    <option value="1" {{ 'selected' if input_data and input_data.Promo==1 }}>Ada Promosi
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="open" class="form-label">🏬 Status Toko</label>
+                                <select class="form-select" id="open" name="open" required>
+                                    <option value="1" {{ 'selected' if (not input_data) or (input_data and
+                                        input_data.Open==1) }}>Buka</option>
+                                    <option value="0" {{ 'selected' if input_data and input_data.Open==0 }}>Tutup
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="state_holiday" class="form-label">🎉 Hari Libur Negara</label>
+                                <select class="form-select" id="state_holiday" name="state_holiday">
+                                    <option value="0" selected>Tidak Ada (0)</option>
+                                    <option value="a">Tipe A</option>
+                                    <option value="b">Tipe B</option>
+                                    <option value="c">Tipe C</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="school_holiday" class="form-label">🎓 Libur Sekolah</label>
+                                <select class="form-select" id="school_holiday" name="school_holiday">
+                                    <option value="0" {{ 'selected' if input_data and input_data.SchoolHoliday==0 }}>
+                                        Tidak</option>
+                                    <option value="1" {{ 'selected' if input_data and input_data.SchoolHoliday==1 }}>Ya
+                                    </option>
+                                </select>
+                            </div>
+                            <button type="submit" id="submitBtn" class="btn btn-primary w-100 btn-lg fw-bold">🔮
+                                Prediksi Sekarang</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="col-lg-7" data-aos="fade-left">
+                {% if predictions %}
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white fw-bold">✅ Hasil Prediksi</div>
+                    <div class="card-body">
+                        <div class="alert alert-info mb-3">
+                            <strong>📍 Input:</strong>
+                            Store #{{ input_data.Store }} |
+                            {{ input_data.Year }}-{{ '%02d'|format(input_data.Month) }}-{{ '%02d'|format(input_data.Day)
+                            }} |
+                            Promo: {{ 'Ya' if input_data.Promo == 1 else 'Tidak' }}
+                        </div>
+
+                        <div class="prediction-results">
+                            <div class="prediction-item mb-3 p-3"
+                                style="background:#eef1ff; border-left:4px solid #667eea;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span><strong>📊 Ensemble (Rata-rata):</strong></span>
+                                    <span class="badge bg-primary fs-5">€ {{ '%.2f'|format(predictions.ensemble)
+                                        }}</span>
+                                </div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between align-items-center small text-muted">
+                                    {% set vals = [predictions.linear_regression, predictions.ann, predictions.lstm,
+                                    predictions.backpropagation] %}
+                                    <span>Rentang Prediksi:</span>
+                                    <span><strong>€ {{ '%.2f'|format(vals|min) }}</strong> — <strong>€ {{
+                                            '%.2f'|format(vals|max) }}</strong></span>
+                                </div>
+                            </div>
+
+                            <h6 class="mb-3 fw-bold mt-4">Prediksi per Model:</h6>
+
+                            {% set model_list = [
+                            ('Linear Regression', predictions.linear_regression, '#4c6ef5'),
+                            ('ANN (Neural Network)', predictions.ann, '#51cf66'),
+                            ('LSTM (RNN)', predictions.lstm, '#845ef7'),
+                            ('Backpropagation', predictions.backpropagation, '#e64980')
+                            ] %}
+                            {% for name, val, color in model_list %}
+                            <div class="prediction-item mb-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>{{ name }}:</span>
+                                    <span class="badge" style="background:{{ color }}">€ {{ '%.2f'|format(val) }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="alert alert-success mt-4 mb-0">
+                            <strong>💡 Tip:</strong> Hasil berada dalam rentang yang wajar. Gunakan nilai
+                            <strong>Ensemble</strong> untuk akurasi yang lebih stabil.
+                        </div>
+                    </div>
+                </div>
+
+                {% elif error %}
+                <div class="alert alert-danger" data-aos="shake">
+                    <strong>❌ Error:</strong> {{ error }}
+                </div>
+
+                {% else %}
+                <div class="card h-100">
+                    <div class="card-header bg-info text-white fw-bold">ℹ️ Cara Penggunaan</div>
+                    <div class="card-body">
+                        <h5>Langkah-langkah:</h5>
+                        <ol>
+                            <li>Masukkan <strong>Store ID</strong> (1-1115)</li>
+                            <li>Pilih <strong>tanggal</strong> prediksi</li>
+                            <li>Atur kondisi <strong>promo</strong> dan <strong>hari libur</strong></li>
+                            <li>Klik <strong>"Prediksi Sekarang"</strong></li>
+                            <li>Lihat hasil dari 4 model berbeda + ensemble</li>
+                        </ol>
+                        <h5 class="mt-4">Model yang Digunakan:</h5>
+                        <ul>
+                            <li><strong>Linear Regression</strong> — model baseline sederhana</li>
+                            <li><strong>ANN</strong> — neural network 3 hidden layers</li>
+                            <li><strong>LSTM</strong> — recurrent network untuk time series</li>
+                            <li><strong>Backpropagation</strong> — custom NN dengan explicit gradient</li>
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Chart -->
+        {% if predictions %}
+        {% set vals = [predictions.linear_regression, predictions.ann, predictions.lstm, predictions.backpropagation] %}
+        <div class="row mt-4" data-aos="zoom-in">
+            <div class="col-lg-10 mx-auto">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-dark text-white fw-bold d-flex align-items-center">
+                        <span class="me-2">📊</span> Perbandingan & Analisis Prediksi
+                    </div>
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <!-- Left: Chart -->
+                            <div class="col-md-7 border-end">
+                                <div style="position: relative; height: 320px; width: 100%;">
+                                    <canvas id="predChart"></canvas>
+                                </div>
+                            </div>
+                            <!-- Right: Analysis/Summary -->
+                            <div class="col-md-5">
+                                <div class="ps-md-4 mt-4 mt-md-0">
+                                    <h6 class="fw-bold mb-3 text-primary">🔍 Ringkasan Analisis:</h6>
+                                    <div class="list-group list-group-flush mb-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="small text-muted">Estimasi Tertinggi:</span>
+                                            <span class="badge bg-success rounded-pill">€ {{ '%.2f'|format(vals|max)
+                                                }}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="small text-muted">Estimasi Terendah:</span>
+                                            <span class="badge bg-danger rounded-pill">€ {{ '%.2f'|format(vals|min)
+                                                }}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="small text-muted">Rentang (Spread):</span>
+                                            <span class="badge bg-info rounded-pill">€ {{ '%.2f'|format((vals|max) -
+                                                (vals|min)) }}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="small text-muted">Deviasi Model:</span>
+                                            <span class="fw-bold text-dark">{{ '%.1f'|format(((vals|max - vals|min) /
+                                                predictions.ensemble) * 100) if predictions.ensemble > 0 else 0
+                                                }}%</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3 bg-light rounded-3 border-start border-4 border-primary">
+                                        <p class="mb-0 small text-dark italic">
+                                            <strong>Insight:</strong> Perbedaan antar model menunjukkan variasi
+                                            algoritma dalam menangkap fitur.
+                                            Model <strong>Ensemble</strong> digunakan untuk memitigasi risiko
+                                            <em>outlier</em> dari satu algoritma saja.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            new Chart(document.getElementById('predChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Linear Reg', 'ANN', 'LSTM', 'Backprop', 'Ensemble'],
+                    datasets: [{
+                        label: 'Predicted Sales (€)',
+                        data: [{{ predictions.linear_regression }}, {{ predictions.ann }},
+                           {{ predictions.lstm }}, {{ predictions.backpropagation }},
+                {{ predictions.ensemble }}],
+                backgroundColor: ['rgba(76,110,245,0.7)', 'rgba(81,207,102,0.7)',
+                'rgba(132,94,247,0.7)', 'rgba(230,73,128,0.7)',
+                'rgba(255,153,0,0.9)'],
+                borderWidth: 0, borderRadius: 8
+                }]
+            },
+                options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Sales (€)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+        </script>
+        {% endif %}
+    </div>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2026 Rossmann Sales Prediction | <a href="/"
+                    class="text-warning text-decoration-none">Home</a></p>
+            <small class="text-white-50 mt-2 d-block" style="font-size: 0.75rem;">
+                *Proyek ini dibuat hanya untuk tujuan pendidikan dan tidak berafiliasi dengan Rossmann.
+                Sumber data berasal dari Kaggle Store Sales Competition.
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+
+        // Fitur Otomatisasi Status Toko
+        const stateHolidaySelect = document.getElementById('state_holiday');
+        const schoolHolidaySelect = document.getElementById('school_holiday');
+        const openSelect = document.getElementById('open');
+
+        // Jika ada Hari Libur Negara, otomatis set toko Tutup (0)
+        stateHolidaySelect.addEventListener('change', function() {
+            if (this.value !== '0') {
+                openSelect.value = '0';
+            } else {
+                openSelect.value = '1';
+            }
+        });
+
+        // Jika ada Libur Sekolah, otomatis set toko Buka (1) 
+        // karena libur sekolah biasanya toko tetap beroperasi
+        schoolHolidaySelect.addEventListener('change', function() {
+            if (this.value === '1' && stateHolidaySelect.value === '0') {
+                openSelect.value = '1';
+            }
+        });
+
+        // Loading Indicator
+        document.getElementById('predictForm').addEventListener('submit', function () {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memproses...';
+        });
+    </script>
+</body>
+
+</html>

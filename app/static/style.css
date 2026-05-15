@@ -1,0 +1,415 @@
+/* ==========================================
+   ROSSMANN STORE SALES - CUSTOM CSS
+   ========================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --primary: #667eea;
+    --primary-dark: #5a67d8;
+    --accent: #764ba2;
+    --rossmann-red: #ce052d;
+    --rossmann-dark: #a50424;
+    --success: #20c997;
+    --danger: #ff6b6b;
+    --warning: #fcc419;
+    --info: #4dabf7;
+    --dark: #1a1a2e;
+    --darker: #16213e;
+    --light: #f8f9fa;
+    --card-bg: #ffffff;
+    --text: #333;
+    --text-muted: #6c757d;
+    --gradient: linear-gradient(135deg, var(--primary), var(--accent));
+    --rossmann-gradient: linear-gradient(135deg, var(--rossmann-red), var(--rossmann-dark));
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.15);
+    --radius: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f0f2f5;
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================
+   NAVBAR
+   ========================================== */
+.navbar {
+    background: rgba(26, 26, 46, 0.8) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.navbar-brand {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: white !important;
+    transition: transform 0.3s;
+    letter-spacing: -0.3px;
+}
+
+.navbar-brand:hover { transform: scale(1.03); }
+
+.logo-img {
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 2px rgba(255,255,255,0.1));
+}
+
+.logo-img:hover {
+    transform: scale(1.05);
+}
+
+.nav-link {
+    color: rgba(255,255,255,0.6) !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    position: relative;
+    padding: 0.5rem 1rem !important;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: white !important;
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0.5rem; right: 0.5rem;
+    height: 3px;
+    background: var(--rossmann-red);
+    border-radius: 3px 3px 0 0;
+}
+
+/* ==========================================
+   HERO SECTION
+   ========================================== */
+.hero-section {
+    background: url('/static/hero_bg.png') no-repeat center center;
+    background-size: cover;
+    min-height: calc(100vh - 76px - 56px); /* subtract navbar and footer approx heights to fit screen */
+    flex-grow: 1; /* allow to grow and fill empty space */
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.7) 0%, rgba(22, 33, 62, 0.85) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 0;
+}
+
+.hero-section .container {
+    z-index: 1;
+}
+
+.hero-section h1 {
+    font-size: 4rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    animation: slideDown 0.8s ease-out;
+}
+
+.hero-section h2 {
+    letter-spacing: 5px;
+    animation: fadeIn 1.2s ease-out;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    animation: slideUp 0.8s ease-out;
+}
+
+.hero-btn {
+    background: var(--rossmann-gradient);
+    border: none;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+.hero-btn:hover {
+    transform: scale(1.05) translateY(-3px);
+    box-shadow: 0 10px 25px rgba(206, 5, 45, 0.4) !important;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(206, 5, 45, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(206, 5, 45, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(206, 5, 45, 0); }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ==========================================
+   CARDS
+   ========================================== */
+.card {
+    border: none;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    background: var(--card-bg);
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-hover);
+}
+
+.card-header {
+    border-bottom: none;
+    padding: 1.25rem 1.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.3px;
+}
+
+.card-body { padding: 1.5rem; }
+
+.model-card {
+    background: linear-gradient(145deg, #f8f9ff, #eef1ff);
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    cursor: pointer;
+}
+
+.model-card:hover {
+    background: var(--gradient);
+    color: white;
+    border-color: transparent;
+}
+
+.model-card:hover .card-text { color: rgba(255,255,255,0.85) !important; }
+.model-card:hover .badge { background: rgba(255,255,255,0.25) !important; color: white !important; }
+
+.stat-card {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: all 0.3s;
+}
+
+.stat-card:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-hover);
+}
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-primary {
+    background: var(--rossmann-gradient);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(206, 5, 45, 0.3);
+    background: var(--rossmann-gradient);
+}
+
+.btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.05rem;
+}
+
+.btn-outline-light:hover {
+    background: white;
+    color: var(--primary) !important;
+}
+
+/* ==========================================
+   FORMS
+   ========================================== */
+.form-control, .form-select {
+    border: 2px solid #e2e6ea;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+}
+
+/* ==========================================
+   PREDICTION RESULTS
+   ========================================== */
+.prediction-results {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    border-left: 4px solid var(--primary);
+}
+
+.prediction-item {
+    padding: 0.85rem 1rem;
+    background: #f8f9ff;
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+.prediction-item:hover {
+    background: #eef1ff;
+    transform: translateX(5px);
+}
+
+/* ==========================================
+   ALERTS
+   ========================================== */
+.alert {
+    border-radius: 10px;
+    border: none;
+    font-size: 0.95rem;
+}
+
+/* ==========================================
+   BADGES
+   ========================================== */
+.badge {
+    padding: 0.45rem 0.75rem;
+    font-weight: 600;
+    border-radius: 8px;
+    font-size: 0.82rem;
+}
+
+/* ==========================================
+   TABLE
+   ========================================== */
+.table { background: white; }
+
+.table thead {
+    background: linear-gradient(135deg, #f8f9fa, #eef1ff);
+    font-weight: 700;
+}
+
+.table tbody tr {
+    transition: background 0.2s;
+}
+
+.table tbody tr:hover { background: #f8f9ff; }
+
+.table-comparison th {
+    background: var(--dark);
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    padding: 1rem;
+}
+
+.table-comparison td {
+    text-align: center;
+    padding: 0.85rem;
+    font-weight: 500;
+}
+
+.best-value {
+    background: #d3f9d8 !important;
+    color: #087f23;
+    font-weight: 700;
+}
+
+/* ==========================================
+   FOOTER
+   ========================================== */
+footer {
+    background: rgba(22, 33, 62, 0.95) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: auto;
+    padding: 2rem 0;
+}
+
+footer a { transition: color 0.3s; }
+footer a:hover { color: var(--primary) !important; }
+
+/* ==========================================
+   SCROLLBAR
+   ========================================== */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ==========================================
+   CODE BLOCKS
+   ========================================== */
+pre {
+    background: #f4f6f9;
+    border-radius: 10px;
+    padding: 1.2rem;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.88rem;
+    overflow-x: auto;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+@media (max-width: 768px) {
+    .hero-section h1 { font-size: 1.8rem; }
+    .hero-section p { font-size: 1rem; }
+    .hero-section { padding: 50px 0 !important; }
+    .btn-group { flex-direction: column !important; gap: 0.5rem !important; }
+    .btn { width: 100%; }
+}
+
+@media (max-width: 576px) {
+    .hero-section h1 { font-size: 1.5rem; }
+    .display-6 { font-size: 1.5rem; }
+}

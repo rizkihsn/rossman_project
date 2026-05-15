@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Comparison - Rossmann</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='logo_rossmann.png') }}" alt="Rossmann Logo" height="35" class="logo-img">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span
+                    class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/predict">Predict</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/comparison">Comparison</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/info">Info</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <h1 class="mb-2 fw-bold text-center" data-aos="fade-down">📈 Perbandingan Model</h1>
+        <p class="text-center text-muted mb-5" data-aos="fade-up">Evaluasi performa 5 algoritma machine learning</p>
+
+        <!-- Regression Models Table -->
+        <div class="card mb-5" data-aos="fade-up">
+            <div class="card-header bg-primary text-white fw-bold">📊 Tabel Perbandingan — Regression Models</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-comparison mb-0">
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>MAE ↓</th>
+                                <th>RMSE ↓</th>
+                                <th>R² Score ↑</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in range(comparison.models|length) %}
+                            <tr>
+                                <td class="fw-bold text-start ps-4">{{ comparison.models[i] }}</td>
+                                <td>{{ comparison.mae[i] }}</td>
+                                <td>{{ comparison.rmse[i] }}</td>
+                                <td>{{ comparison.r2[i] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- K-Means Info -->
+        <div class="card mb-5" data-aos="fade-up">
+            <div class="card-header bg-success text-white fw-bold">📦 K-Means Clustering (Unsupervised)</div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <h3 class="fw-bold text-success">K = {{ kmeans.k }}</h3>
+                            <p class="text-muted mb-0">Optimal Clusters</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <h3 class="fw-bold text-primary">{{ kmeans.silhouette }}</h3>
+                            <p class="text-muted mb-0">Silhouette Score</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <h3 class="fw-bold text-info">{{ kmeans.inertia|int }}</h3>
+                            <p class="text-muted mb-0">Inertia</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-4 mb-0">
+                    <strong>📌 Catatan:</strong> K-Means adalah algoritma <em>unsupervised</em> (tanpa target variable),
+                    sehingga tidak menggunakan metrik MAE/RMSE/R². Evaluasi menggunakan <strong>Silhouette
+                        Score</strong>
+                    (semakin mendekati 1 = clustering semakin baik) dan <strong>Elbow Method</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header fw-bold">📉 MAE Comparison (Lower = Better)</div>
+                    <div class="card-body"><canvas id="maeChart"></canvas></div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header fw-bold">📉 RMSE Comparison (Lower = Better)</div>
+                    <div class="card-body"><canvas id="rmseChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-header fw-bold">📈 R² Score Comparison (Higher = Better)</div>
+                    <div class="card-body"><canvas id="r2Chart"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Explanation -->
+        <div class="card" data-aos="fade-up">
+            <div class="card-header bg-warning fw-bold">💡 Penjelasan & Kesimpulan</div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <h6 class="fw-bold">📐 MAE (Mean Absolute Error)</h6>
+                        <p class="small text-muted">Rata-rata selisih absolut antara prediksi dan actual. Semakin kecil
+                            = semakin baik.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="fw-bold">📏 RMSE (Root Mean Squared Error)</h6>
+                        <p class="small text-muted">Akar rata-rata kuadrat error. Memberikan penalti lebih besar untuk
+                            error besar.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="fw-bold">📊 R² (R-Squared)</h6>
+                        <p class="small text-muted">Proporsi variance yang dijelaskan model. Range 0-1, semakin tinggi =
+                            semakin baik.</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="alert alert-success mb-0">
+                    <strong>🏆 Kesimpulan:</strong> Model terbaik dipilih berdasarkan kombinasi R² tertinggi dan
+                    MAE/RMSE terendah.
+                    ANN dan Backpropagation biasanya memberikan performa terbaik karena kemampuannya menangkap pola
+                    non-linier.
+                    LSTM optimal untuk prediksi time series harian.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2026 Rossmann Sales Prediction | <a href="/"
+                    class="text-warning text-decoration-none">Home</a></p>
+            <small class="text-white-50 mt-2 d-block" style="font-size: 0.75rem;">
+                *Proyek ini dibuat hanya untuk tujuan pendidikan dan tidak berafiliasi dengan Rossmann.
+                Sumber data berasal dari Kaggle Store Sales Competition.
+            </small>
+        </div>
+    </footer>
+
+    <script>
+        const models = {{ comparison.models | tojson }};
+        const colors = ['rgba(76,110,245,0.8)', 'rgba(81,207,102,0.8)', 'rgba(132,94,247,0.8)', 'rgba(230,73,128,0.8)'];
+        const opts = { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } };
+
+        new Chart(document.getElementById('maeChart'), {
+            type: 'bar', data: { labels: models, datasets: [{ data: {{ comparison.mae | tojson }}, backgroundColor: colors, borderRadius: 8, borderWidth: 0
+        }]}, options: opts
+    });
+        new Chart(document.getElementById('rmseChart'), {
+            type: 'bar', data: { labels: models, datasets: [{ data: {{ comparison.rmse | tojson }}, backgroundColor: colors, borderRadius: 8, borderWidth: 0
+        }]}, options: opts
+    });
+        new Chart(document.getElementById('r2Chart'), {
+            type: 'bar', data: { labels: models, datasets: [{ data: {{ comparison.r2 | tojson }}, backgroundColor: colors, borderRadius: 8, borderWidth: 0
+        }]},
+            options: { ...opts, scales: { y: { beginAtZero: true, max: 1 } } }
+    });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
+</body>
+
+</html>
