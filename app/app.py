@@ -53,14 +53,14 @@ state_holiday_map = {'0': 0, 'a': 1, 'b': 2, 'c': 3}
 # Load trained models
 lr_model = joblib.load(os.path.join(MODEL_DIR, 'linear_regression.pkl'))
 
-import tensorflow as tf
-ann_model = tf.keras.models.load_model(
+from keras import models as keras_models
+ann_model = keras_models.load_model(
     os.path.join(MODEL_DIR, 'ann_model.keras'), compile=False
 )
-bp_model = tf.keras.models.load_model(
+bp_model = keras_models.load_model(
     os.path.join(MODEL_DIR, 'backprop_model.keras'), compile=False
 )
-lstm_model = tf.keras.models.load_model(
+lstm_model = keras_models.load_model(
     os.path.join(MODEL_DIR, 'lstm_model.keras'), compile=False
 )
 scaler_lstm = joblib.load(os.path.join(MODEL_DIR, 'scaler_lstm.pkl'))
@@ -138,9 +138,7 @@ def predict_sales(X_scaled):
     try:
         lr_pred  = float(lr_model.predict(X_scaled)[0])
         ann_pred = float(ann_model.predict(X_scaled, verbose=0)[0][0])
-        bp_pred  = float(bp_model(
-            tf.constant(X_scaled, dtype=tf.float32), training=False
-        ).numpy()[0][0])
+        bp_pred  = float(bp_model.predict(X_scaled, verbose=0)[0][0])
 
         # LSTM: prediksi berdasarkan 30 hari terakhir dari data historis
         lookback = model_results.get('lookback', 30)
