@@ -47,5 +47,3 @@ scratch/
 *.log
 *.tmp
 
-# ---------- Gemini ----------
-.gemini/
