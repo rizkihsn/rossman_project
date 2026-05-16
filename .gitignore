@@ -36,9 +36,8 @@ data/train.csv
 data/test.csv
 
 # ---------- Trained Models (auto-generated) ----------
-# File model bisa di-generate ulang dari notebook
-models/*.pkl
-models/*.h5
+# Hanya abaikan file yang terlalu besar untuk GitHub (>100MB)
+models/preprocessing_data.pkl
 
 # ---------- Scratch / Temporary Files ----------
 scratch/

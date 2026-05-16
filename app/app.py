@@ -35,8 +35,8 @@ app = Flask(__name__)
 # ===========================================================================
 print("Loading models...")
 
-# Preprocessing data (scaler, feature columns)
-with open(os.path.join(MODEL_DIR, 'preprocessing_data.pkl'), 'rb') as f:
+# Load Preprocessing Assets (Scaler & Columns)
+with open(os.path.join(MODEL_DIR, 'app_assets.pkl'), 'rb') as f:
     prep_data = pickle.load(f)
 
 scaler          = prep_data['scaler']
