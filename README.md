@@ -1,3 +1,12 @@
+---
+title: Rossmann Sales Prediction
+emoji: 🏪
+colorFrom: red
+colorTo: pink
+sdk: docker
+app_port: 7860
+---
+
 # 🏪 Rossmann Store Sales Prediction
 
 **Nama:** Rizki Hasan Fauzi  
