@@ -254,8 +254,8 @@ Weight Update Manual</code></pre>
 │   ├── test.csv           ← Dataset testing
 │   └── store.csv          ← Informasi toko (1115 stores)
 ├── notebooks/
-│   ├── 01_preprocessing_eda.py   ← Preprocessing & EDA
-│   └── 02_model_implementation.py ← 5 Algoritma ML
+│   ├── 01_preprocessing_eda.ipynb    ← Preprocessing & EDA
+│   └── 02_model_implementation.ipynb ← 5 Algoritma ML
 ├── models/
 │   ├── preprocessing_data.pkl    ← Data yang sudah dipreprocess
 │   ├── linear_regression.pkl     ← Model Linear Regression
@@ -263,16 +263,16 @@ Weight Update Manual</code></pre>
 │   ├── lstm_model.h5             ← Model LSTM
 │   ├── backprop_model.h5         ← Model Backpropagation
 │   ├── kmeans_model.pkl          ← Model K-Means
+│   ├── scaler_lstm.pkl           ← Scaler untuk model LSTM
+│   ├── timeseries_data.pkl       ← Data timeseries LSTM
 │   └── model_results.pkl         ← Hasil evaluasi semua model
 ├── app/
 │   ├── static/                   ← Custom CSS/JS
 │   ├── templates/                ← HTML Templates
 │   └── app.py                    ← Flask Web Application
 ├── docs/
-│   ├── 01_eda_visualization.png
-│   ├── 02_correlation_matrix.png
-│   ├── 03-08_model_results.png
-│   └── model_comparison.csv
+│   ├── 01_preprocessing_eda/     ← Output visualisasi EDA
+│   └── 02_model_evaluation/      ← Output visualisasi ML & metrik
 ├── requirements.txt
 └── README.md</code></pre>
             </div>
