@@ -23,7 +23,7 @@ app_port: 7860
 
 ## 🔗 Tautan Penting
 
-- **Demo Aplikasi:** [Klik di sini untuk Demo](https://...)
+- **Demo Aplikasi:** [Klik di sini untuk Demo](https://huggingface.co/spaces/rizkihsnfzi/rossman_project)
 - **Laporan Proyek:** [Klik di sini untuk Laporan](https://...)
 - **Video Presentasi:** [Klik di sini untuk Video YouTube](https://...)
 
