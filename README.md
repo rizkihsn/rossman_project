@@ -1,11 +1,22 @@
 # 🏪 Rossmann Store Sales Prediction
 
+**Nama:** Rizki Hasan Fauzi  
+**NIM:** 301240071  
+
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.12+-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-2.3+-000000?style=for-the-badge&logo=flask&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-1.2+-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
 
 > Proyek Machine Learning untuk memprediksi penjualan harian toko retail Rossmann menggunakan **5 algoritma ML/AI**, dilengkapi dengan web dashboard interaktif.
+
+---
+
+## 🔗 Tautan Penting
+
+- **Demo Aplikasi:** [Klik di sini untuk Demo](https://...)
+- **Laporan Proyek:** [Klik di sini untuk Laporan](https://...)
+- **Video Presentasi:** [Klik di sini untuk Video YouTube](https://...)
 
 ---
 
