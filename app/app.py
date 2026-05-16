@@ -55,13 +55,13 @@ lr_model = joblib.load(os.path.join(MODEL_DIR, 'linear_regression.pkl'))
 
 import tensorflow as tf
 ann_model = tf.keras.models.load_model(
-    os.path.join(MODEL_DIR, 'ann_model.h5'), compile=False
+    os.path.join(MODEL_DIR, 'ann_model.keras'), compile=False
 )
 bp_model = tf.keras.models.load_model(
-    os.path.join(MODEL_DIR, 'backprop_model.h5'), compile=False
+    os.path.join(MODEL_DIR, 'backprop_model.keras'), compile=False
 )
 lstm_model = tf.keras.models.load_model(
-    os.path.join(MODEL_DIR, 'lstm_model.h5'), compile=False
+    os.path.join(MODEL_DIR, 'lstm_model.keras'), compile=False
 )
 scaler_lstm = joblib.load(os.path.join(MODEL_DIR, 'scaler_lstm.pkl'))
 
