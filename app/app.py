@@ -53,14 +53,15 @@ state_holiday_map = {'0': 0, 'a': 1, 'b': 2, 'c': 3}
 # Load trained models
 lr_model = joblib.load(os.path.join(MODEL_DIR, 'linear_regression.pkl'))
 
-from keras import models as keras_models
-ann_model = keras_models.load_model(
+import tensorflow as tf
+# Load ANN, Backpropagation, and LSTM models using TensorFlow Keras
+ann_model = tf.keras.models.load_model(
     os.path.join(MODEL_DIR, 'ann_model.keras'), compile=False
 )
-bp_model = keras_models.load_model(
+bp_model = tf.keras.models.load_model(
     os.path.join(MODEL_DIR, 'backprop_model.keras'), compile=False
 )
-lstm_model = keras_models.load_model(
+lstm_model = tf.keras.models.load_model(
     os.path.join(MODEL_DIR, 'lstm_model.keras'), compile=False
 )
 scaler_lstm = joblib.load(os.path.join(MODEL_DIR, 'scaler_lstm.pkl'))
@@ -75,7 +76,7 @@ with open(os.path.join(MODEL_DIR, 'timeseries_data.pkl'), 'rb') as f:
     ts_data = pickle.load(f)
 daily_sales = ts_data['daily_sales']
 
-print("✓ Semua model berhasil dimuat!")
+print("SUCCESS: Semua model berhasil dimuat!")
 
 # ===========================================================================
 # HELPER FUNCTIONS
@@ -136,11 +137,16 @@ def prepare_input(store_id, date_str, promo, open_status,
 def predict_sales(X_scaled):
     """Prediksi menggunakan semua regression models"""
     try:
-        lr_pred  = float(lr_model.predict(X_scaled)[0])
+        # 1. Linear Regression
+        lr_pred = float(lr_model.predict(X_scaled)[0])
+        
+        # 2. ANN
         ann_pred = float(ann_model.predict(X_scaled, verbose=0)[0][0])
-        bp_pred  = float(bp_model.predict(X_scaled, verbose=0)[0][0])
+        
+        # 3. Backpropagation
+        bp_pred = float(bp_model.predict(X_scaled, verbose=0)[0][0])
 
-        # LSTM: prediksi berdasarkan 30 hari terakhir dari data historis
+        # 4. LSTM: prediksi berdasarkan 30 hari terakhir dari data historis
         lookback = model_results.get('lookback', 30)
         last_sales = daily_sales.values[-lookback:]
         last_norm  = scaler_lstm.transform(last_sales.reshape(-1, 1)).flatten()
